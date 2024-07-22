@@ -2,6 +2,7 @@
 	import Column from '$lib/components/structure/Column.svelte';
 	import { Button, TextInput, Tile } from 'carbon-components-svelte';
 	import { derived, writable } from 'svelte/store';
+	import type { Result } from 'ts-results-es';
 
 	let nickname = writable<string | null>(null);
 	let password = writable<string | null>(null);
@@ -10,10 +11,32 @@
 		return $nickname != null && $nickname != '';
 	});
 
-    $: console.log($nickname);
-	$: console.log($allow_register);
+	$: console.log('[PAGE] Nickname: ' + $nickname);
+	$: console.log('[PAGE] Password: ' + $allow_register);
 
-	async function try_register_user() {}
+	async function try_register_user() {
+		console.log(`[PAGE] Nickname: ${$nickname}, Password: ${$password}`);
+		const response = await fetch('/api/users', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				nickname: $nickname,
+				password: $password
+			})
+		});
+
+		const result: Result<void, string[]> = (await response.json()) as Result<void, string[]>;
+
+		console.log(result);
+		if (result.isOk()) {
+			// function undefined
+			console.log('user created');
+		} else {
+			console.log(result.unwrapErr().join('\n'));
+		}
+	}
 </script>
 
 <Tile>

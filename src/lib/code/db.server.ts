@@ -4,12 +4,18 @@ import { DATABASE_NAME } from "$env/static/private"
 
 console.log("DATABASE_URL: " + DATABASE_URL)
 
-const mongo = new MongoClient(DATABASE_URL!)
-export let db: Db = mongo.db(DATABASE_NAME)
+let mongo:MongoClient;
+export let db: Db;
 
-test_connection().catch(console.dir)
+
+function create_client(){
+    mongo = new MongoClient(DATABASE_URL!)
+    db = mongo.db(DATABASE_NAME)
+}
 
 async function test_connection() {
+    console.log("test connection")
+    create_client()
     try {
         await mongo.connect()
 
@@ -19,9 +25,24 @@ async function test_connection() {
     } finally {
         await mongo.close()
     }
+
+    console.log("connection tested")
 }
 
 export async function prepare_database() {
+    await test_connection().catch(console.dir)
+
+
+    console.log("prepare database")
+    create_client()
+    mongo.connect()
+
+    await seed_database();
+    console.log("database prepared")
+}
+
+
+async function seed_database(){
     let users = db.collection("users")
 
     let admin = await users.findOne({ name: "admin" })
@@ -32,4 +53,3 @@ export async function prepare_database() {
         console.log("admin user already exists")
     }
 }
-
