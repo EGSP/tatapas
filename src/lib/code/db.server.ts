@@ -41,6 +41,10 @@ export async function prepare_database() {
     console.log("database prepared")
 }
 
+export function get_db() {
+    return db
+}
+
 
 async function seed_database(){
     let users = db.collection("users")

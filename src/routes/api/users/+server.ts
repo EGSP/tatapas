@@ -1,5 +1,5 @@
 import { Ok, Err, Result } from "ts-results-es"
-import { db } from "$lib/code/db.server"
+import { db, get_db } from "$lib/code/db.server"
 import { json } from '@sveltejs/kit';
 import type { RequestEvent } from "./$types";
 
@@ -10,7 +10,7 @@ export async function POST(event: RequestEvent):Promise<Response>{
     const { nickname, password } = await request.json()
 
     // Promise<Result<void, string[]>> 
-    let users = db.collection("users")
+    let users = get_db().collection("users")
 
     console.log("find user: " + nickname)
     let user = await users.findOne({ name: nickname })
