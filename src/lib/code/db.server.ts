@@ -1,6 +1,7 @@
 import { Db, MongoClient } from "mongodb"
 import { DATABASE_URL } from "$env/static/private"
 import { DATABASE_NAME } from "$env/static/private"
+import chalk from "chalk";
 
 console.log("DATABASE_URL: " + DATABASE_URL)
 
@@ -14,7 +15,7 @@ function create_client(){
 }
 
 async function test_connection() {
-    console.log("test connection")
+    dlog("test connection")
     create_client()
     try {
         await mongo.connect()
@@ -26,22 +27,25 @@ async function test_connection() {
         await mongo.close()
     }
 
-    console.log("connection tested")
+    dlog("connection tested")
 }
 
 export async function prepare_database() {
     await test_connection().catch(console.dir)
 
 
-    console.log("prepare database")
+    dlog("prepare database")
     create_client()
     mongo.connect()
 
     await seed_database();
-    console.log("database prepared")
+    dlog("database prepared")
 }
 
 export function get_db() {
+    if (!db) {
+        prepare_database()
+    }
     return db
 }
 
@@ -52,8 +56,14 @@ async function seed_database(){
     let admin = await users.findOne({ name: "admin" })
     if (admin == null) {
         await users.insertOne({ name: "admin", password: "admin", role: "admin" }).catch(console.dir)
-        console.log("admin user created")
+        dlog("admin user created")
     }else{
-        console.log("admin user already exists")
+        dlog("admin user already exists")
     }
+}
+
+
+export function dlog(message: string) {
+    const prefix = chalk.bgGreenBright.black("[DB]")
+    console.log(prefix,":", message)
 }

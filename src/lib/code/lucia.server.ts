@@ -20,12 +20,16 @@ export function prepare_lucia() {
                 attributes: {
                     secure: false
                 }
-            }
+            },
         }
     );
 }
 
 export function get_lucia() {
+    if (!lucia) {
+        prepare_lucia();
+    }
+
     return lucia;
 }
 
@@ -38,6 +42,8 @@ declare module "lucia" {
 interface UserDocumentScheme {
     _id: string;
 }
+
+
 interface SessionDocumentScheme {
     _id: string;
     user_id: string;
