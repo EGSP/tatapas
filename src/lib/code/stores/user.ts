@@ -1,5 +1,5 @@
-import type { User } from "lucia";
 import { writable } from "svelte/store";
+import type { User } from "../db/types";
 
 function create_user_store(){
     const { subscribe, set, update } = writable<User | null>(null);
@@ -10,3 +10,5 @@ function create_user_store(){
         logout: () => update(user => null),
     }
 }
+
+export const user = create_user_store()

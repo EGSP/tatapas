@@ -24,12 +24,14 @@ export async function POST(event: RequestEvent):Promise<Response>{
         return json(bad("incorrect nickname or password"))
     }
 
+    // TODO: invalidate or delete old sessions
+
     const lucia = get_lucia();
     const session = await lucia.createSession(user._id.toString(),{});
     const sessionCookie = lucia.createSessionCookie(session.id);
     
     event.cookies.set(sessionCookie.name, sessionCookie.value, {
-        path:".",
+        path:"/",
         ...sessionCookie.attributes
     });
 

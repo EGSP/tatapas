@@ -10,6 +10,8 @@
 	import Empty from '$lib/components/structure/Empty.svelte';
 	import { isOk, type FetchResult } from '$lib/code/db/types';
 
+	import {user} from "$lib/code/stores/user"
+
 	export let data: any;
 	export let user_data: any;
 
@@ -20,8 +22,25 @@
 		return $nickname != null && $nickname != '';
 	});
 
-	$: logger.plog('Nickname: ' + $nickname);
-	$: logger.plog('Password: ' + $is_valid_login_input);
+	async function try_login_by_cookies() {
+
+		logger.plog('Try login by cookies');
+		const response = await fetch('/api/users/fetch',{
+			method: 'POST'
+		});
+		const result: FetchResult = (await response.json()) as FetchResult;
+
+		if(isOk(result)){
+			user.login(result.value);
+			if($user != null) {
+				logger.plog(`User: nickname: ${$user.nickname}, user role: ${$user.role}`);				
+			}else{
+				logger.plog('Login response is null');
+			}
+		}else{
+			logger.plog(result.message);
+		}
+	}
 
 	async function try_login_user() {
 		logger.plog(`Nickname: ${$nickname}, Password: ${$password}`);
@@ -35,6 +54,20 @@
 				password: $password
 			})
 		});
+
+		const result: FetchResult = (await response.json()) as FetchResult;
+
+		logger.plog(result);
+		if (isOk(result) && result.value != null) {
+			// function undefined
+			logger.plog('User logged in');
+			user.login(result.value);
+			if($user != null) {
+				logger.plog(`User: nickname: ${$user.nickname}, user role: ${$user.role}`);
+			}
+		} else {
+			logger.plog(result.message.join('\n'));
+		}
 	}
 
 	async function try_register_user() {
@@ -53,7 +86,7 @@
 		const result: FetchResult = (await response.json()) as FetchResult;
 
 		logger.plog(result);
-		if (isOk(result.value)) {
+		if (isOk(result)) {
 			// function undefined
 			logger.plog('user created');
 		} else {
@@ -61,9 +94,11 @@
 		}
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		logger.plog('[PAGE] data from server:\n' + JSON.stringify(data));
 		logger.plog('[PAGE] data.user:\n' + JSON.stringify(data.user));
+
+		await try_login_by_cookies();
 	});
 </script>
 
@@ -93,4 +128,14 @@
 			>
 		</Row>
 	</Column>
+</Tile>
+
+<Tile>
+	<h2>Login data</h2>
+	{#if $user != null}
+		<p>User nickname: {$user.nickname}</p>
+		<p>User role: {$user.role}</p>
+	{:else}
+		<p>user: null</p>
+	{/if}
 </Tile>
