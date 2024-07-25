@@ -8,10 +8,8 @@ import { get_lucia } from "$lib/code/lucia.server";
 export async function POST(event: RequestEvent):Promise<Response>{
 
     const request = event.request;
-    // logger.slog(request)
     const { nickname, password } = await request.json()
-
-    // Promise<Result<void, string[]>> 
+    
     let users = get_db().collection("users")
 
     logger.slog("Trying to find user: " + nickname)
