@@ -2,6 +2,7 @@ import { Db, MongoClient } from "mongodb"
 import { DATABASE_URL } from "$env/static/private"
 import { DATABASE_NAME } from "$env/static/private"
 import chalk from "chalk";
+import { generateId, generateIdFromEntropySize } from "lucia";
 
 console.log("DATABASE_URL: " + DATABASE_URL)
 
@@ -10,7 +11,11 @@ export let db: Db;
 
 
 function create_client(){
-    mongo = new MongoClient(DATABASE_URL!)
+    mongo = new MongoClient(DATABASE_URL!,{
+        pkFactory: {
+            createPk:()=> generateId(24)
+        }
+    })
     db = mongo.db(DATABASE_NAME)
 }
 

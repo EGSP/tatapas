@@ -36,5 +36,8 @@ export async function POST(event: RequestEvent):Promise<Response>{
     });
 
     logger.slog("User logged in")
+
+    event.cookies.set("keep_cookie_test","true", {path:"/"})
+
     return json(ok({nickname: user.name, role: user.role}));
 }

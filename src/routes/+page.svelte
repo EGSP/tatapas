@@ -33,7 +33,7 @@
 		if(isOk(result)){
 			user.login(result.value);
 			if($user != null) {
-				logger.plog(`User: nickname: ${$user.nickname}, user role: ${$user.role}`);				
+				logger.plog(`User: nickname: ${$user.name}, user role: ${$user.role}`);				
 			}else{
 				logger.plog('Login response is null');
 			}
@@ -63,10 +63,10 @@
 			logger.plog('User logged in');
 			user.login(result.value);
 			if($user != null) {
-				logger.plog(`User: nickname: ${$user.nickname}, user role: ${$user.role}`);
+				logger.plog(`User: nickname: ${$user.name}, user role: ${$user.role}`);
 			}
 		} else {
-			logger.plog(result.message.join('\n'));
+			logger.plog(result.message);
 		}
 	}
 
@@ -133,7 +133,7 @@
 <Tile>
 	<h2>Login data</h2>
 	{#if $user != null}
-		<p>User nickname: {$user.nickname}</p>
+		<p>User nickname: {$user.name}</p>
 		<p>User role: {$user.role}</p>
 	{:else}
 		<p>user: null</p>

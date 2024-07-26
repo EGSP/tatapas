@@ -1,6 +1,7 @@
 import { building } from "$app/environment";
 import { prepare_database } from "$lib/code/db.server";
 import { get_lucia, prepare_lucia } from "$lib/code/lucia.server";
+import { logger } from "$lib/code/utilities/logging";
 
 async function ini(){
     if(!building){
@@ -30,6 +31,8 @@ export async function handle({ event, resolve }) {
             ...sessionCoockie.attributes
         });
     }
+
+    logger.slog("User session from cookies:\n" + JSON.stringify(session));
 
     if(!session){
         const sessionCoockie = lucia.createBlankSessionCookie();

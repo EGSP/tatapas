@@ -1,7 +1,7 @@
 import { MongodbAdapter } from "@lucia-auth/adapter-mongodb";
 import { db, get_db } from "./db.server";
-import type { Collection } from "mongodb";
-import { Lucia } from "lucia";
+import type { Collection, ObjectId } from "mongodb";
+import { Lucia, TimeSpan } from "lucia";
 
 let adapter: MongodbAdapter;
 let lucia: Lucia;
@@ -21,6 +21,7 @@ export function prepare_lucia() {
                     secure: false
                 }
             },
+            sessionExpiresIn: new TimeSpan(1,"w")
         }
     );
 }
