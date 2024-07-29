@@ -7,20 +7,21 @@ import { get_lucia } from "$lib/code/lucia.server";
 
 export async function POST(event: RequestEvent):Promise<Response>{
 
+    const logbox = event.locals.logbox_
     const request = event.request;
-    const { nickname, password } = await request.json()
+    const { name, password } = await request.json()
     
     let users = get_db().collection("users")
 
-    logger.slog("Trying to find user: " + nickname)
-    let user = await users.findOne({ name: nickname })
+    logbox.slog("Trying to find user: " + name)
+    let user = await users.findOne({ name: name })
     if (user == null) {
 
-        logger.slog("User not found")
-        logger.slog(`User input data: Nickname: ${ nickname } Password: ${ password }`)
+        logbox.slog("User not found")
+        logbox.slog(`User input data: Nickname: ${ name } Password: ${ password }`)
         let fault_checks: string[] = []
         // VALIDATION
-        if (!nickname) {
+        if (!name) {
             fault_checks.push("nickname is empty")
         }
 
@@ -29,15 +30,15 @@ export async function POST(event: RequestEvent):Promise<Response>{
         }
 
         if (fault_checks.length > 0) {
-            logger.slog("Input fault: " + fault_checks)
-            return json(bad(fault_checks))
+            logbox.slog("Input fault: " + fault_checks)
+            logbox.print()
+            return json(bad(fault_checks.join(" ")))
         }
 
-
         // ADD to DB
-        logger.slog("Adding new user: " + nickname)
-        const document_info = await users.insertOne({ name: nickname, password: password, role: "user" });
-        logger.slog("User document added: " + JSON.stringify(document_info))
+        logbox.slog("Adding new user: " + name)
+        const document_info = await users.insertOne({ name: name, password: password, role: "user" });
+        logbox.slog("User document added: " + JSON.stringify(document_info))
 
         const added_user = await users.findOne({ _id: document_info.insertedId })
 
@@ -50,10 +51,11 @@ export async function POST(event: RequestEvent):Promise<Response>{
             path:"/",
             ...sessionCookie.attributes
         });
-
+        logbox.print()
         return json(ok({nickname: added_user?.name, role: added_user?.role}));
     } else {
-        logger.slog("User already exists")
-        return json(bad(["user already exists"]))
+        logbox.slog("User already exists")
+        logbox.print()
+        return json(bad("user already exists"))
     }
 }

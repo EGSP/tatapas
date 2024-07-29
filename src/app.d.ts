@@ -11,6 +11,7 @@ declare global {
 		interface Locals {
 			user: import("lucia").User | null;
 			session: import("lucia").Session | null;
+			logbox_: import("$lib/code/utilities/logging").Logbox
 		}
 	}
 }

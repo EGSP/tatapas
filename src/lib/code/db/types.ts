@@ -1,30 +1,31 @@
 export interface User {
     _id: string
-    password: string
     name: string
     role: string
 }
 
 
-export interface FetchResult {
-    value: any | null;
-    message: any | null
+
+export interface FetchOk<T>{
+    value: T
 }
 
-export function ok(result: any): FetchResult {
+export interface FetchBad{
+    message: string
+}
+
+export function ok<T>(result: any): FetchOk<T> {
     return {
-        value: result,
-        message: null
+        value: result
     };
 }
 
-export function bad(result: any): FetchResult {
+export function bad(message: string): FetchBad {
     return {
-        message: result,
-        value: null
+        message: message,
     };
 }
 
-export function isOk(result: FetchResult): boolean {
-    return result.message == null
+export function is_ok_fetch<T>(fetch: FetchOk<T>|FetchBad): fetch is FetchOk<T> {
+    return (fetch as FetchOk<T>).value !== undefined;
 }
