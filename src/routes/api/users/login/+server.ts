@@ -1,5 +1,5 @@
 import { get_db } from "$lib/code/db.server";
-import { bad, ok } from "$lib/code/db/types";
+import { bad, mes, ok } from "$lib/code/db/types";
 import { get_lucia } from "$lib/code/lucia.server";
 import { logger, print_logbox } from "$lib/code/utilities/logging";
 import type { RequestEvent } from "@sveltejs/kit";
@@ -18,13 +18,13 @@ export async function POST(event: RequestEvent):Promise<Response>{
     if (user == null) {
         logbox.slog("User logged with incorrect name")
         logbox.print()
-        return json(bad("incorrect name or password"))
+        return json(bad(mes("Login failed","User with that name or password not found","warning")))
     }
 
     if(password != user.password) {
         logbox.slog("User logged with incorrect password")
         logbox.print()
-        return json(bad("incorrect name or password"))
+        return json(bad(mes("Login failed","User with that name or password not found","warning")))
     }
 
     // TODO: invalidate or delete old sessions

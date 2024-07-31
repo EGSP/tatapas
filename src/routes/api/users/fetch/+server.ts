@@ -1,5 +1,5 @@
 import { get_db } from "$lib/code/db.server";
-import { bad, ok, type User } from "$lib/code/db/types";
+import { bad, mes, ok, type User } from "$lib/code/db/types";
 import { logger, print_logbox } from "$lib/code/utilities/logging";
 import { json, type RequestEvent } from "@sveltejs/kit";
 
@@ -9,7 +9,7 @@ export async function POST(event: RequestEvent): Promise<Response> {
 
     if (session == null) {
         logbox.print()
-        return json(bad("user not logged in"))
+        return json(bad(mes("Session not found","Please log in","info")))
     }
 
     const users = get_db().collection<{ _id: string }>("users")
@@ -20,7 +20,7 @@ export async function POST(event: RequestEvent): Promise<Response> {
     ) as User
     if (user == null) {
         logbox.print()
-        return json(bad("user not found"))
+        return json(bad(mes("Not found","User associated with session not found")))
     } else {
 
         logbox.slog("Fetched user found: " + `${JSON.stringify(user)}`)

@@ -16,7 +16,7 @@
 	import { debug_store } from '$lib/code/stores/debug';
 	import VerticalLine from '$lib/components/structure/VerticalLine.svelte';
 
-	debug_store.set(true)
+	debug_store.set(false);
 
 	let name = writable<string | null>(null);
 	let password = writable<string | null>(null);
@@ -74,15 +74,18 @@
 	});
 </script>
 
-
 <Plane>
 	<Header>
 		<h3>tatapas</h3>
 		<VerticalLine />
+		{#if $user_store}
+			<div>User: {$user_store.name}</div>
+		{:else}
+			<div>You are not logged in</div>
+		{/if}
 	</Header>
 	<LoginPort />
 </Plane>
-
 
 <!-- <div style="display:none">
 	<Tile>

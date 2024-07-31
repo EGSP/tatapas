@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import { is_ok_fetch, type FetchBad, type FetchOk, type User } from "../db/types";
+import {  type Result, type User } from "../db/types";
 import type { Logbox } from "../utilities/logging";
 
 export const user_store = create_user_store()
@@ -14,7 +14,7 @@ function create_user_store() {
     }
 }
 
-export async function user_fetch(logbox_: Logbox): Promise<User | null> {
+export async function user_fetch(logbox_: Logbox): Promise<Result<User>> {
     const logbox = logbox_.from()
     logbox.plog("Fetching user to get authenticated")
 
@@ -28,11 +28,11 @@ export async function user_fetch(logbox_: Logbox): Promise<User | null> {
         return fetch_data.value;
     } else {
         logbox.plog("Fetch failed: " + JSON.stringify(fetch_data))
-        return null;
+        return fetch_data;
     }
 }
 
-export async function user_login(logbox_: Logbox, name_: string, password_: string): Promise<User | null> {
+export async function user_login(logbox_: Logbox, name_: string, password_: string): Promise<Result<User>> {
     const logbox = logbox_.from()
     logbox.plog("Authenticating user with name: " + name_ + " and password: " + password_)
     
@@ -53,11 +53,11 @@ export async function user_login(logbox_: Logbox, name_: string, password_: stri
         return fetch_data.value;
     } else {
         logbox.plog("Authentication failed: " + JSON.stringify(fetch_data))
-        return null;
+        return fetch_data;
     }
 }
 
-export async function user_register(logbox_: Logbox, name_: string, password_: string): Promise<User | null> {
+export async function user_register(logbox_: Logbox, name_: string, password_: string): Promise<Result<User>> {
     const logbox = logbox_.from()
     logbox.plog("Registering user")
     
@@ -78,6 +78,6 @@ export async function user_register(logbox_: Logbox, name_: string, password_: s
         return fetch_data.value;
     } else {
         logbox.plog("Registration failed: " + JSON.stringify(fetch_data))
-        return null;
+        return fetch_data;
     }
 }

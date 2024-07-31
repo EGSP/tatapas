@@ -6,6 +6,7 @@
 	import Column from '$lib/components/structure/Column.svelte';
 	import Row from '$lib/components/structure/Row.svelte';
 	import Rig from '../structure/Rig.svelte';
+	import { onMount } from 'svelte';
 
 	let name = writable<string | null>(null);
 	let password = writable<string | null>(null);
@@ -14,12 +15,14 @@
 		return $name != null && $name != '' && $password != null && $password != '';
 	});
 
+    let show_login;
+
 	async function try_login_user() {
 		const logbox = new Logbox();
 		logbox.plog(`User input: name: ${$name}, password: ${$password}`);
 
 		const user = await user_login(logbox, $name!, $password!);
-		if (user == null) {
+		if (user) {
 			logbox.print();
 			return;
 		}
@@ -43,6 +46,14 @@
 		logbox.plog(`User registered : name: ${$user_store!.name}, user role: ${$user_store!.role}`);
 		logbox.print();
 	}
+
+	onMount(() => {
+		user_store.subscribe((user) => {
+			if (user != null) {
+				name.set(user.name);
+			}
+		});
+	});
 </script>
 
 <div class="frame">
