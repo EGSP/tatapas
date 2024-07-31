@@ -46,9 +46,11 @@
 </script>
 
 <div class="frame">
+	<Rig width={12}>
 		<Tile>
-			<Rig height={8} width={36} debug>
+			<Rig height={8} width={36}>
 				<Column gap={1}>
+					<h2>Login to your account</h2>
 					<TextInput bind:value={$name} placeholder="Enter your new name..." />
 					<TextInput bind:value={$password} placeholder="Enter your new password..." />
 
@@ -66,32 +68,24 @@
 		{#if !$is_valid_login_input}
 			<InlineNotification
 				hideCloseButton
-                
 				kind="info"
 				title="Fill credentials:"
 				subtitle="Enter your name and password to log in or sign up"
 			/>
 		{/if}
+	</Rig>
 </div>
 
 <style>
 	.frame {
 		width: 100%;
-		min-height: 100%;
 
-        position: relative;
-		top: 35%;
+		position: relative;
+		top: 25%;
 
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		/* justify-content: center; */
-	}
-
-	.container {
-		position: relative;
-		top: 50%;
-
-		background-color: gray;
 	}
 </style>

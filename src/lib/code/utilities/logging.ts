@@ -87,7 +87,7 @@ export function print_logbox_iterative(logbox: Logbox) {
                 }else if(i == logs.length - 1 && stack.length == 0){
                     header = chalk.underline(header)
                 }
-                console.log("\t".repeat(depth) + `${header} ${message}`) 
+                console.log(" | ".repeat(depth) + `${header} ${message}`) 
                 messages_printed++
             }
         }

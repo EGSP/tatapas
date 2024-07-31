@@ -9,22 +9,22 @@ import { Ok } from "ts-results-es";
 export async function POST(event: RequestEvent):Promise<Response>{
     const logbox = event.locals.logbox_
     const request = event.request;
-    const { nickname, password } = await request.json()
+    const { name, password } = await request.json()
 
-    logbox.slog("Trying to find user: " + nickname)
+    logbox.slog("Trying to find user: " + name)
     const users = get_db().collection("users")
-    const user = await users.findOne({name: nickname})
+    const user = await users.findOne({name: name})
 
     if (user == null) {
-        logbox.slog("User logged with incorrect nickname")
+        logbox.slog("User logged with incorrect name")
         logbox.print()
-        return json(bad("incorrect nickname or password"))
+        return json(bad("incorrect name or password"))
     }
 
     if(password != user.password) {
         logbox.slog("User logged with incorrect password")
         logbox.print()
-        return json(bad("incorrect nickname or password"))
+        return json(bad("incorrect name or password"))
     }
 
     // TODO: invalidate or delete old sessions
@@ -44,5 +44,5 @@ export async function POST(event: RequestEvent):Promise<Response>{
 
 
     logbox.print()
-    return json(ok({nickname: user.name, role: user.role}));
+    return json(ok({name: user.name, role: user.role}));
 }

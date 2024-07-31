@@ -12,6 +12,11 @@
 	import { is_ok_fetch, type FetchBad, type FetchOk } from '$lib/code/db/types';
 	import LoginPort from '$lib/components/viewports/LoginPort.svelte';
 	import Plane from '$lib/components/structure/Plane.svelte';
+	import Header from '$lib/components/elements/header/Header.svelte';
+	import { debug_store } from '$lib/code/stores/debug';
+	import VerticalLine from '$lib/components/structure/VerticalLine.svelte';
+
+	debug_store.set(true)
 
 	let name = writable<string | null>(null);
 	let password = writable<string | null>(null);
@@ -71,11 +76,15 @@
 
 
 <Plane>
+	<Header>
+		<h3>tatapas</h3>
+		<VerticalLine />
+	</Header>
 	<LoginPort />
 </Plane>
 
 
-<div style="display:none">
+<!-- <div style="display:none">
 	<Tile>
 		<h1>Welcome to SvelteKit</h1>
 		<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
@@ -112,4 +121,4 @@
 			<p>user: null</p>
 		{/if}
 	</Tile>
-</div>
+</div> -->

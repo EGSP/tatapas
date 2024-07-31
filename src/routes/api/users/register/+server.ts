@@ -18,11 +18,11 @@ export async function POST(event: RequestEvent):Promise<Response>{
     if (user == null) {
 
         logbox.slog("User not found")
-        logbox.slog(`User input data: Nickname: ${ name } Password: ${ password }`)
+        logbox.slog(`User input data: name: ${ name } Password: ${ password }`)
         let fault_checks: string[] = []
         // VALIDATION
         if (!name) {
-            fault_checks.push("nickname is empty")
+            fault_checks.push("name is empty")
         }
 
         if (!password) {
@@ -52,7 +52,7 @@ export async function POST(event: RequestEvent):Promise<Response>{
             ...sessionCookie.attributes
         });
         logbox.print()
-        return json(ok({nickname: added_user?.name, role: added_user?.role}));
+        return json(ok({name: added_user?.name, role: added_user?.role}));
     } else {
         logbox.slog("User already exists")
         logbox.print()

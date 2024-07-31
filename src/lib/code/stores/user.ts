@@ -34,7 +34,7 @@ export async function user_fetch(logbox_: Logbox): Promise<User | null> {
 
 export async function user_login(logbox_: Logbox, name_: string, password_: string): Promise<User | null> {
     const logbox = logbox_.from()
-    logbox.plog("Authenticating user")
+    logbox.plog("Authenticating user with name: " + name_ + " and password: " + password_)
     
     const fetch_response = await fetch('/api/users/login', {
         method: 'POST',
