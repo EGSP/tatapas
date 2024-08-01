@@ -21,7 +21,7 @@ export function prepare_lucia() {
                     secure: false
                 }
             },
-            sessionExpiresIn: new TimeSpan(1,"w")
+            sessionExpiresIn: new TimeSpan(2,"m")
         }
     );
 }

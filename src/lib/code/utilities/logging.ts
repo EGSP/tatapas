@@ -105,7 +105,12 @@ export function print_logbox_iterative(logbox: Logbox) {
                     symbol = chalk.gray(">. ")
                 }
             }
-            console.log(symbol + " | ".repeat(depth) + `${header} ${message}`)
+
+            if (symbol == "") {
+                console.log("   "+"| ".repeat(depth) + `${header} ${message}`)
+            } else {
+                console.log(symbol + "| ".repeat(depth) + `${header} ${message}`)
+            }
             messages_printed++
         }
     }
@@ -115,7 +120,7 @@ export function print_logbox_iterative(logbox: Logbox) {
     }
 }
 
-export function message_to_log(message: Message){
+export function message_to_log(message: Message) {
     return `${chalk_kind(message.kind)} ${message.title} ${message.subtitle}`
 }
 

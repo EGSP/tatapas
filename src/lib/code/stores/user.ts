@@ -42,8 +42,8 @@ export async function user_login(logbox_: Logbox, name_: string, password_: stri
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            name: name_,
-            password: password_
+            name: name_.trim(),
+            password: password_.trim()
         })
     });
 

@@ -19,7 +19,7 @@ export async function handle({ event, resolve }) {
     const logbox = new Logbox();
     event.locals.logbox_ = logbox;
 
-    logbox.add(chalk.blueBright(":::handle"), "");
+    // logbox.add(chalk.blueBright(":::handle"), "");
     const lucia = get_lucia();
 
     const session_id = event.cookies.get(lucia.sessionCookieName);
@@ -39,7 +39,7 @@ export async function handle({ event, resolve }) {
         });
     }
 
-    logbox.slog("Got user session:\n" + JSON.stringify(session));
+    // logbox.slog("Got user session:\n" + JSON.stringify(session));
 
     if(!session){
         const sessionCoockie = lucia.createBlankSessionCookie();

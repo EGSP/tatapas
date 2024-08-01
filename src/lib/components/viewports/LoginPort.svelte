@@ -7,7 +7,7 @@
 	import Row from '$lib/components/structure/Row.svelte';
 	import Rig from '../structure/Rig.svelte';
 	import { onMount } from 'svelte';
-	import type { Message } from '$lib/code/db/types';
+	import type { Message, Result, User } from '$lib/code/db/types';
 
 	let name = writable<string | null>(null);
 	let password = writable<string | null>(null);
@@ -37,7 +37,7 @@
 			return;
 		}
 
-		user_store.logged_in(result.value);
+		apply_login_data(result.value);
 		logbox.plog(`User logged in : name: ${$user_store!.name}, user role: ${$user_store!.role}`);
 		logbox.print();
 	}
@@ -56,9 +56,14 @@
 			return;
 		}
 
-		user_store.logged_in(result.value);
+		apply_login_data(result.value);
 		logbox.plog(`User registered : name: ${$user_store!.name}, user role: ${$user_store!.role}`);
 		logbox.print();
+	}
+
+	function apply_login_data(user:User){
+		password.set(null);
+		user_store.logged_in(user);
 	}
 
 	onMount(() => {
