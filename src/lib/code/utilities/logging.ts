@@ -1,17 +1,26 @@
 import chalk from "chalk"
+import type { Message } from "../db/types"
 
 export let logger = {
     slog: (message: any) => {
-        const prefix = chalk.bgWhiteBright.black("[SERVER]")
-        console.log(prefix, message)
+        const logbox = new Logbox()
+        logbox.slog(message)
+        logbox.print()
     },
     dlog: (message: any) => {
-        const prefix = chalk.bgGreenBright.black("[DB]")
-        console.log(prefix, message)
+        const logbox = new Logbox()
+        logbox.dlog(message)
+        logbox.print()
     },
     plog: (message: any) => {
-        const prefix = chalk.bgMagentaBright.black("[PAGE]")
-        console.log(prefix, message)
+        const logbox = new Logbox()
+        logbox.plog(message)
+        logbox.print()
+    },
+    pulog: (message: any) => {
+        const logbox = new Logbox()
+        logbox.pulog(message)
+        logbox.print()
     }
 }
 
@@ -48,6 +57,11 @@ export class Logbox {
         this.add(header, message)
     }
 
+    pulog(message: string) {
+        const header = chalk.bgYellowBright.black("pulse")
+        this.add(header, message)
+    }
+
     print() {
         // print_logbox(this)
         print_logbox_iterative(this)
@@ -77,16 +91,21 @@ export function print_logbox_iterative(logbox: Logbox) {
             logs.unshift(...logbox_to_logs(log, depth + 1))
 
         } else {
-            let header = log[0];
+            const header = log[0];
             const message = log[1];
+            let symbol = ""
 
-            // check if it is the first message
-            if (messages_printed == 0) {
-                header = chalk.gray("> ")+ chalk.bold(header)
-            } else if (logs.length == 0) {
-                header =chalk.gray(">. ") + chalk.underline(header)
+            if (messages_printed == 0 && logs.length == 0) {
+                symbol = chalk.gray("<> ")
+            } else {
+                // check if it is the first message
+                if (messages_printed == 0) {
+                    symbol = chalk.gray(">  ")
+                } else if (logs.length == 0) {
+                    symbol = chalk.gray(">. ")
+                }
             }
-            console.log(" | ".repeat(depth) + `${header} ${message}`)
+            console.log(symbol + " | ".repeat(depth) + `${header} ${message}`)
             messages_printed++
         }
     }
@@ -94,6 +113,10 @@ export function print_logbox_iterative(logbox: Logbox) {
     function logbox_to_logs(logbox: Logbox, depth: number): [log: ([header: string, message: string] | Logbox), depth: number][] {
         return logbox.logs.map(log => [log, depth])
     }
+}
+
+export function message_to_log(message: Message){
+    return `${chalk_kind(message.kind)} ${message.title} ${message.subtitle}`
 }
 
 export function chalk_kind(kind: string) {

@@ -39,6 +39,7 @@
 	"type": "module",
 	"dependencies": {
 		"@lucia-auth/adapter-mongodb": "^1.0.3",
+		"@pulsecron/pulse": "^1.6.1",
 		"chalk": "^5.3.0",
 		"mongo-migrate-ts": "^1.6.0",
 		"mongodb": "6.8",

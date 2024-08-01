@@ -27,9 +27,8 @@ export async function POST(event: RequestEvent):Promise<Response>{
         return json(bad(mes("Login failed","User with that name or password not found","warning")))
     }
 
-    // TODO: invalidate or delete old sessions
-
     const lucia = get_lucia();
+    await lucia.invalidateUserSessions(user._id.toString());
     const session = await lucia.createSession(user._id.toString(),{});
     const sessionCookie = lucia.createSessionCookie(session.id);
     

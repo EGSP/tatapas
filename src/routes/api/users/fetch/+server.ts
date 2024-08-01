@@ -24,10 +24,6 @@ export async function POST(event: RequestEvent): Promise<Response> {
     } else {
 
         logbox.slog("Fetched user found: " + `${JSON.stringify(user)}`)
-        // logger.slog("Fetched user name: " +`${user.name}`)
-        // logger.slog("Fetched user id: " +`${user._id}`)
-        // logger.slog("Fetched user password: " +`${(user as any).password}`)
-        // logger.slog("Fetched user role: " +`${user.role}`)
     }
 
     logbox.print()

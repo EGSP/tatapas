@@ -81,3 +81,20 @@ export async function user_register(logbox_: Logbox, name_: string, password_: s
         return result;
     }
 }
+
+export async function user_logout(logbox_: Logbox): Promise<Result<string>>{
+    const logbox = logbox_.from()
+    logbox.plog("Logging out user")
+    
+    const fetch_response = await fetch('/api/users/logout', {
+        method: 'POST'
+    });
+    const result = (await fetch_response.json()) as Result<string>;
+    if (result.value != null) {
+        logbox.plog("Logout succeeded: " + JSON.stringify(result))
+        return result;
+    } else {
+        logbox.plog("Logout failed: " + JSON.stringify(result))
+        return result;
+    }
+}

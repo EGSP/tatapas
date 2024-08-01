@@ -1,6 +1,7 @@
 import { building } from "$app/environment";
 import { prepare_database } from "$lib/code/db.server";
 import { get_lucia, prepare_lucia } from "$lib/code/lucia.server";
+import { prepare_pulse } from "$lib/code/pulse.server";
 import { Logbox, logger } from "$lib/code/utilities/logging";
 import chalk from "chalk";
 
@@ -8,13 +9,16 @@ async function ini(){
     if(!building){
         await prepare_database()
         await prepare_lucia()
+        await prepare_pulse()
     }
 }
 
 ini()
 
 export async function handle({ event, resolve }) {
-    const logbox = new Logbox()
+    const logbox = new Logbox();
+    event.locals.logbox_ = logbox;
+
     logbox.add(chalk.blueBright(":::handle"), "");
     const lucia = get_lucia();
 
@@ -48,7 +52,7 @@ export async function handle({ event, resolve }) {
     event.locals.user = user;
     event.locals.session = session;
 
-    event.locals.logbox_ = logbox
+   
 
     return resolve(event);
 }

@@ -10,7 +10,7 @@ export async function POST(event: RequestEvent):Promise<Response>{
     }
 
     const lucia = get_lucia();
-    await lucia.invalidateSession(session.id);
+    await lucia.invalidateUserSessions(session.userId);
 
     const sessionCookie = lucia.createBlankSessionCookie();
     event.cookies.set(sessionCookie.name, sessionCookie.value, {

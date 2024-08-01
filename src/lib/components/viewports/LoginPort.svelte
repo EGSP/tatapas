@@ -2,7 +2,7 @@
 	import { Button, InlineNotification, TextInput, Tile } from 'carbon-components-svelte';
 	import { writable, derived } from 'svelte/store';
 	import { user_login, user_register, user_store } from '$lib/code/stores/user';
-	import { chalk_kind, Logbox } from '$lib/code/utilities/logging';
+	import { chalk_kind, Logbox, message_to_log } from '$lib/code/utilities/logging';
 	import Column from '$lib/components/structure/Column.svelte';
 	import Row from '$lib/components/structure/Row.svelte';
 	import Rig from '../structure/Rig.svelte';
@@ -30,7 +30,7 @@
 		const result = await user_login(logbox, $name!, $password!);
 		if (result.value == null) {
 			for (const message of result.messages) {
-				logbox.plog(`${chalk_kind(message.kind)} ${message.title} ${message.subtitle}`);
+				logbox.plog(message_to_log(message));
 			}
 			logbox.print();
 			messages.set(result.messages);
@@ -49,7 +49,7 @@
 		const result = await user_register(logbox, $name!, $password!);
 		if (result.value == null) {
 			for (const message of result.messages) {
-				logbox.plog(`${chalk_kind(message.kind)} ${message.title} ${message.subtitle}`);
+				logbox.plog(message_to_log(message));
 			}
 			logbox.print();
 			messages.set(result.messages);
