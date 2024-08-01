@@ -21,14 +21,14 @@ export async function user_fetch(logbox_: Logbox): Promise<Result<User>> {
     const fetch_response = await fetch('/api/users/fetch', {
         method: 'POST'
     });
-    const fetch_data = (await fetch_response.json()) as FetchOk<User> | FetchBad;
+    const result = (await fetch_response.json()) as Result<User>;
 
-    if (is_ok_fetch(fetch_data)) {
-        logbox.plog("Fetch succeeded: " + JSON.stringify(fetch_data))
-        return fetch_data.value;
+    if (result.value != null) {
+        logbox.plog("Fetch succeeded: " + JSON.stringify(result))
+        return result;
     } else {
-        logbox.plog("Fetch failed: " + JSON.stringify(fetch_data))
-        return fetch_data;
+        logbox.plog("Fetch failed: " + JSON.stringify(result))
+        return result;
     }
 }
 
@@ -47,13 +47,13 @@ export async function user_login(logbox_: Logbox, name_: string, password_: stri
         })
     });
 
-    const fetch_data = (await fetch_response.json()) as FetchOk<User> | FetchBad;
-    if (is_ok_fetch(fetch_data)) {
-        logbox.plog("Authentication succeeded: " + JSON.stringify(fetch_data))
-        return fetch_data.value;
+    const result = (await fetch_response.json()) as Result<User>;
+    if (result.value != null) {
+        logbox.plog("Authentication succeeded: " + JSON.stringify(result))
+        return result;
     } else {
-        logbox.plog("Authentication failed: " + JSON.stringify(fetch_data))
-        return fetch_data;
+        logbox.plog("Authentication failed: " + JSON.stringify(result))
+        return result;
     }
 }
 
@@ -72,12 +72,12 @@ export async function user_register(logbox_: Logbox, name_: string, password_: s
         })
     });
 
-    const fetch_data = (await fetch_response.json()) as FetchOk<User> | FetchBad;
-    if (is_ok_fetch(fetch_data)) {
-        logbox.plog("Registration succeeded: " + JSON.stringify(fetch_data))
-        return fetch_data.value;
+    const result = (await fetch_response.json()) as Result<User>;
+    if ( result.value != null ) {
+        logbox.plog("Registration succeeded: " + JSON.stringify(result))
+        return result;
     } else {
-        logbox.plog("Registration failed: " + JSON.stringify(fetch_data))
-        return fetch_data;
+        logbox.plog("Registration failed: " + JSON.stringify(result))
+        return result;
     }
 }

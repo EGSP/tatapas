@@ -2,7 +2,7 @@ import { db, get_db } from "$lib/code/db.server"
 import { json } from '@sveltejs/kit';
 import type { RequestEvent } from "./$types";
 import { logger } from "$lib/code/utilities/logging";
-import { bad, bad_many, mes, ok, type Message } from "$lib/code/db/types";
+import { bad, mes, ok, type Message } from "$lib/code/db/types";
 import { get_lucia } from "$lib/code/lucia.server";
 
 export async function POST(event: RequestEvent):Promise<Response>{
@@ -19,20 +19,20 @@ export async function POST(event: RequestEvent):Promise<Response>{
 
         logbox.slog("User not found")
         logbox.slog(`User input data: name: ${ name } Password: ${ password }`)
-        let fault_checks: Message[] = []
+        let fault_messages: Message[] = []
         // VALIDATION
         if (!name) {
-            fault_checks.push(mes("Empty name","Name cannot be empty","warning"))
+            fault_messages.push(mes("Empty name","Name cannot be empty","warning"))
         }
 
         if (!password) {
-            fault_checks.push(mes("Empty password","Password cannot be empty","warning"))
+            fault_messages.push(mes("Empty password","Password cannot be empty","warning"))
         }
 
-        if (fault_checks.length > 0) {
-            logbox.slog("Input fault: " + fault_checks)
+        if (fault_messages.length > 0) {
+            logbox.slog("Input fults:\n" + JSON.stringify(fault_messages))
             logbox.print()
-            return json(bad_many(fault_checks))
+            return json(bad(...fault_messages))
         }
 
         // ADD to DB
@@ -56,6 +56,6 @@ export async function POST(event: RequestEvent):Promise<Response>{
     } else {
         logbox.slog("User " + name + " already exists")
         logbox.print()
-        return json(bad(mes("Register failed",`User with that name ${ name } already exists","warning`)))
+        return json(bad(mes("Register failed",`User with that name ${ name } already exists`,"warning")))
     }
 }

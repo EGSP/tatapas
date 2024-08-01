@@ -2,32 +2,42 @@
 	import { Button, InlineNotification, TextInput, Tile } from 'carbon-components-svelte';
 	import { writable, derived } from 'svelte/store';
 	import { user_login, user_register, user_store } from '$lib/code/stores/user';
-	import { Logbox } from '$lib/code/utilities/logging';
+	import { chalk_kind, Logbox } from '$lib/code/utilities/logging';
 	import Column from '$lib/components/structure/Column.svelte';
 	import Row from '$lib/components/structure/Row.svelte';
 	import Rig from '../structure/Rig.svelte';
 	import { onMount } from 'svelte';
+	import type { Message } from '$lib/code/db/types';
 
 	let name = writable<string | null>(null);
 	let password = writable<string | null>(null);
 
-	let is_valid_login_input = derived([name, password], ([$name, $password]) => {
+	let is_valid_input = derived([name, password], ([$name, $password]) => {
 		return $name != null && $name != '' && $password != null && $password != '';
 	});
 
-    let show_login;
+	let messages = writable<Message[]>([]);
+
+	$: {
+		$name, $password;
+		messages.set([]);
+	}
 
 	async function try_login_user() {
 		const logbox = new Logbox();
 		logbox.plog(`User input: name: ${$name}, password: ${$password}`);
 
-		const user = await user_login(logbox, $name!, $password!);
-		if (user) {
+		const result = await user_login(logbox, $name!, $password!);
+		if (result.value == null) {
+			for (const message of result.messages) {
+				logbox.plog(`${chalk_kind(message.kind)} ${message.title} ${message.subtitle}`);
+			}
 			logbox.print();
+			messages.set(result.messages);
 			return;
 		}
 
-		user_store.logged_in(user);
+		user_store.logged_in(result.value);
 		logbox.plog(`User logged in : name: ${$user_store!.name}, user role: ${$user_store!.role}`);
 		logbox.print();
 	}
@@ -36,13 +46,17 @@
 		const logbox = new Logbox();
 		logbox.plog(`User input: name: ${$name}, password: ${$password}`);
 
-		const user = await user_register(logbox, $name!, $password!);
-		if (user == null) {
+		const result = await user_register(logbox, $name!, $password!);
+		if (result.value == null) {
+			for (const message of result.messages) {
+				logbox.plog(`${chalk_kind(message.kind)} ${message.title} ${message.subtitle}`);
+			}
 			logbox.print();
+			messages.set(result.messages);
 			return;
 		}
 
-		user_store.logged_in(user);
+		user_store.logged_in(result.value);
 		logbox.plog(`User registered : name: ${$user_store!.name}, user role: ${$user_store!.role}`);
 		logbox.print();
 	}
@@ -66,23 +80,33 @@
 					<TextInput bind:value={$password} placeholder="Enter your new password..." />
 
 					<Row justify_content="end">
-						<Button disabled={!$is_valid_login_input} on:click={try_register_user} kind="secondary"
+						<Button disabled={!$is_valid_input} on:click={try_register_user} kind="secondary"
 							>Sign Up</Button
 						>
-						<Button disabled={!$is_valid_login_input} on:click={try_login_user} kind="primary"
+						<Button disabled={!$is_valid_input} on:click={try_login_user} kind="primary"
 							>Log In</Button
 						>
 					</Row>
 				</Column>
 			</Rig>
 		</Tile>
-		{#if !$is_valid_login_input}
+		{#if !$is_valid_input}
 			<InlineNotification
 				hideCloseButton
-				kind="info"
+				kind="warning"
 				title="Fill credentials:"
 				subtitle="Enter your name and password to log in or sign up"
 			/>
+		{/if}
+		{#if $messages.length > 0}
+			{#each $messages as messages}
+				<InlineNotification
+					hideCloseButton
+					kind={messages.kind}
+					title={messages.title}
+					subtitle={messages.subtitle}
+				/>
+			{/each}
 		{/if}
 	</Rig>
 </div>

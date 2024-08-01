@@ -9,7 +9,6 @@
 	import { Logbox, logger, print_logbox } from '$lib/code/utilities/logging';
 
 	import { user_login, user_fetch, user_store, user_register } from '$lib/code/stores/user';
-	import { is_ok_fetch, type FetchBad, type FetchOk } from '$lib/code/db/types';
 	import LoginPort from '$lib/components/viewports/LoginPort.svelte';
 	import Plane from '$lib/components/structure/Plane.svelte';
 	import Header from '$lib/components/elements/header/Header.svelte';
@@ -27,48 +26,21 @@
 
 	async function try_fetch_user() {
 		const logbox = new Logbox();
-		const user = await user_fetch(logbox);
+		const result = await user_fetch(logbox);
 
-		if (user == null) {
+		if (result.value == null) {
+			for(const message of result.messages) {
+				logbox.plog(`${message.kind} ${message.title}${message.subtitle}`);
+			}
 			logbox.print();
 			return;
 		}
 
-		user_store.logged_in(user);
+		user_store.logged_in(result.value);
 		logbox.plog(`User: name: ${$user_store!.name}, user role: ${$user_store!.role}`);
 		logbox.print();
 	}
-
-	async function try_login_user() {
-		const logbox = new Logbox();
-		logbox.plog(`User input: name: ${$name}, password: ${$password}`);
-
-		const user = await user_login(logbox, $name!, $password!);
-		if (user == null) {
-			logbox.print();
-			return;
-		}
-
-		user_store.logged_in(user);
-		logbox.plog(`User logged in : name: ${$user_store!.name}, user role: ${$user_store!.role}`);
-		logbox.print();
-	}
-
-	async function try_register_user() {
-		const logbox = new Logbox();
-		logbox.plog(`User input: name: ${$name}, password: ${$password}`);
-
-		const user = await user_register(logbox, $name!, $password!);
-		if (user == null) {
-			logbox.print();
-			return;
-		}
-
-		user_store.logged_in(user);
-		logbox.plog(`User registered : name: ${$user_store!.name}, user role: ${$user_store!.role}`);
-		logbox.print();
-	}
-
+	
 	onMount(async () => {
 		await try_fetch_user();
 	});

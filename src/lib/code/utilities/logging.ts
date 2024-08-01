@@ -68,28 +68,43 @@ export function print_logbox(logbox: Logbox, depth = 0) {
 
 
 export function print_logbox_iterative(logbox: Logbox) {
-    const stack: [logbox:Logbox, depth:number][] = [[logbox, 0]]
+    const logs: [log: ([header: string, message: string] | Logbox), depth: number][] = logbox_to_logs(logbox, 0)
     let messages_printed = 0
-    while (stack.length > 0) {
-        const [logbox, depth] = stack.pop()!
-        const logs = logbox.logs
-        for (let i = 0; i < logs.length; i++) {
-            const log = logs[i]
-            if (log instanceof Logbox) {
-                stack.push([log, depth + 1])
-            } else {
-                let header = log[0];
-                const message = log[1];
+    while (logs.length > 0) {
+        const [log, depth] = logs.shift()!
 
-                // check if it is the first message
-                if (messages_printed == 0) {
-                    header = chalk.bold(header)
-                }else if(i == logs.length - 1 && stack.length == 0){
-                    header = chalk.underline(header)
-                }
-                console.log(" | ".repeat(depth) + `${header} ${message}`) 
-                messages_printed++
+        if (log instanceof Logbox) {
+            logs.unshift(...logbox_to_logs(log, depth + 1))
+
+        } else {
+            let header = log[0];
+            const message = log[1];
+
+            // check if it is the first message
+            if (messages_printed == 0) {
+                header = chalk.gray("> ")+ chalk.bold(header)
+            } else if (logs.length == 0) {
+                header =chalk.gray(">. ") + chalk.underline(header)
             }
+            console.log(" | ".repeat(depth) + `${header} ${message}`)
+            messages_printed++
         }
+    }
+
+    function logbox_to_logs(logbox: Logbox, depth: number): [log: ([header: string, message: string] | Logbox), depth: number][] {
+        return logbox.logs.map(log => [log, depth])
+    }
+}
+
+export function chalk_kind(kind: string) {
+    switch (kind) {
+        case "info":
+            return chalk.blue(kind)
+        case "success":
+            return chalk.green(kind)
+        case "warning":
+            return chalk.yellow(kind)
+        case "error":
+            return chalk.red(kind)
     }
 }
