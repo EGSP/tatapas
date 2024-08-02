@@ -1,5 +1,5 @@
 import { get_db } from "$lib/code/db.server";
-import { bad, mes, ok } from "$lib/code/db/types";
+import { bad, mes, ok } from "$lib/code/types";
 import { get_lucia } from "$lib/code/lucia.server";
 import { logger, print_logbox } from "$lib/code/utilities/logging";
 import type { RequestEvent } from "@sveltejs/kit";

@@ -1,10 +1,22 @@
 export interface User {
-    _id: string
     name: string
     role: string
 }
 
+export interface Password{
+    _id: string,
+    usecase: string,
+}
 
+export interface CatalogTree{
+    _id: string,
+    root: Catalog
+}
+
+export interface Catalog{
+    catalogs: Catalog[]|null,
+    passwords_id: string|null
+}
 
 // export interface FetchOk<T>{
 //     value: T

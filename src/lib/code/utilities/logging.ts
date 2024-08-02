@@ -1,5 +1,5 @@
 import chalk from "chalk"
-import type { Message } from "../db/types"
+import type { Message } from "../types"
 
 export let logger = {
     slog: (message: any) => {

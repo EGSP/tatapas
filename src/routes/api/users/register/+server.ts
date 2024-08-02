@@ -2,7 +2,7 @@ import { db, get_db } from "$lib/code/db.server"
 import { json } from '@sveltejs/kit';
 import type { RequestEvent } from "./$types";
 import { logger } from "$lib/code/utilities/logging";
-import { bad, mes, ok, type Message } from "$lib/code/db/types";
+import { bad, mes, ok, type Message } from "$lib/code/types";
 import { get_lucia } from "$lib/code/lucia.server";
 
 export async function POST(event: RequestEvent):Promise<Response>{

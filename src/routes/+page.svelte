@@ -17,6 +17,7 @@
 	import Viewport from '$lib/components/structure/Viewport.svelte';
 	import Bar from '$lib/components/structure/Bar.svelte';
 	import CarbonLogout from '$lib/icons/CarbonLogout.svelte';
+	import PasswordsPort from '$lib/components/viewports/PasswordsPort.svelte';
 
 	debug_store.set(false);
 
@@ -86,4 +87,5 @@
 		{/if}
 	</Header>
 	<Viewport display={$viewport == 'login' || $viewport == null}><LoginPort /></Viewport>
+	<Viewport display={$viewport == 'main'}><PasswordsPort /></Viewport>
 </Plane>

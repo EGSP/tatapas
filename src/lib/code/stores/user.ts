@@ -1,5 +1,5 @@
 import { writable } from "svelte/store";
-import {  type Result, type User } from "../db/types";
+import {  type Result, type User } from "../types";
 import type { Logbox } from "../utilities/logging";
 
 export const user_store = create_user_store()

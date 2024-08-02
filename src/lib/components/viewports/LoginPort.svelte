@@ -7,7 +7,7 @@
 	import Row from '$lib/components/structure/Row.svelte';
 	import Rig from '../structure/Rig.svelte';
 	import { onMount } from 'svelte';
-	import type { Message, Result, User } from '$lib/code/db/types';
+	import type { Message, Result, User } from '$lib/code/types';
 
 	let name = writable<string | null>(null);
 	let password = writable<string | null>(null);

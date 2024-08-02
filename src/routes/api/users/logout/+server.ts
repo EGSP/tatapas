@@ -1,4 +1,4 @@
-import { bad, ok } from "$lib/code/db/types";
+import { bad, ok } from "$lib/code/types";
 import { get_lucia } from "$lib/code/lucia.server";
 import { json, type RequestEvent } from "@sveltejs/kit";
 

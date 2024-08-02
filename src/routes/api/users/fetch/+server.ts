@@ -1,5 +1,5 @@
 import { get_db } from "$lib/code/db.server";
-import { bad, mes, ok, type User } from "$lib/code/db/types";
+import { bad, mes, ok, type User } from "$lib/code/types";
 import { logger, print_logbox } from "$lib/code/utilities/logging";
 import { json, type RequestEvent } from "@sveltejs/kit";
 
