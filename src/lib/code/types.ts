@@ -1,10 +1,22 @@
+export interface USER{
+    _id: string,
+    name: string,
+    role: string
+}
+
+export interface PASSWORD{
+    _id: string,
+    owner_id: string,
+    value: string,
+    usecase: string
+}
+
 export interface User {
     name: string
     role: string
 }
 
 export interface Password{
-    _id: string,
     usecase: string,
 }
 

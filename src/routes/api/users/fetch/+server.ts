@@ -15,9 +15,7 @@ export async function POST(event: RequestEvent): Promise<Response> {
     const users = get_db().collection<{ _id: string }>("users")
 
     logbox.slog("Fetching user with id: " + session.userId + " length of " + session.userId.length)
-    const user = await users.findOne({ _id: session.userId },
-        { projection: { password: 0 } }
-    ) as User
+    const user = await users.findOne({ _id: session.userId }, { projection: { password: 0 } } )
     if (user == null) {
         logbox.print()
         return json(bad(mes("Not found","User associated with session not found")))
