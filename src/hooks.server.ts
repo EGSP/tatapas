@@ -1,4 +1,5 @@
 import { building } from "$app/environment";
+import { prepare_api } from "$lib/code/api/api";
 import { prepare_database } from "$lib/code/db.server";
 import { get_lucia, prepare_lucia } from "$lib/code/lucia.server";
 import { prepare_pulse } from "$lib/code/pulse.server";
@@ -10,6 +11,7 @@ async function ini(){
         await prepare_database()
         await prepare_lucia()
         await prepare_pulse()
+        await prepare_api()
     }
 }
 
@@ -19,6 +21,8 @@ export async function handle({ event, resolve }) {
     const logbox = new Logbox();
     event.locals.logbox_ = logbox;
 
+    // log current time
+    logbox.slog( chalk.blueBright(`::: ${new Date().toLocaleString()}`) );
     // logbox.add(chalk.blueBright(":::handle"), "");
     const lucia = get_lucia();
 

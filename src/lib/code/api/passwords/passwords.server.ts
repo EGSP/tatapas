@@ -2,16 +2,16 @@ import { get_db } from "$lib/code/db.server";
 import { bad, mes, ok } from "$lib/code/types";
 import { json, type RequestEvent } from "@sveltejs/kit";
 
-export async function PASSWORDS_ADD(event: RequestEvent): Promise<Response> {
-    const logbox = event.locals.logbox_;
+export async function PASSWORDS_ADD(object:any, event: RequestEvent): Promise<Response> {
+    const logbox = event.locals.logbox_.from();
     const session = event.locals.session;
 
     if (session == null) {
-        logbox.print()
+        logbox.slog("Session not found")
         return json(bad(mes("Session not found","Please log in","info")))
     }
 
-    const {password, usecase} = await event.request.json();
+    const {password, usecase} = object;
     const passwords = get_db().collection("passwords");
 
     // check if same password with same usecase exists
@@ -20,7 +20,7 @@ export async function PASSWORDS_ADD(event: RequestEvent): Promise<Response> {
 
     if (password_in_db != null) {
         logbox.slog(`Password for usecase ${ usecase } already exists`)
-        logbox.print()
+        
         return json(bad(mes("Password already exists","Password for this usecase already exists","warning")))
     }else{
 
@@ -32,21 +32,21 @@ export async function PASSWORDS_ADD(event: RequestEvent): Promise<Response> {
         });
 
         logbox.slog("Password added");
-        logbox.print() 
+         
         return json(ok({usecase: usecase}))
     }
 }
 
-export async function PASSWORDS_CHANGE(event: RequestEvent): Promise<Response> {
-    const logbox = event.locals.logbox_
+export async function PASSWORDS_CHANGE(object:any, event: RequestEvent): Promise<Response> {
+    const logbox = event.locals.logbox_.from()
     const session = event.locals.session;
 
     if (session == null) {
-        logbox.print()
+        logbox.slog("Session not found")
         return json(bad(mes("Session not found","Please log in","info")))
     }
 
-    const {usecase, password} = await event.request.json();
+    const {usecase, password} = object;
     const passwords = get_db().collection("passwords");
 
     // check if same password with same usecase exists
@@ -55,28 +55,28 @@ export async function PASSWORDS_CHANGE(event: RequestEvent): Promise<Response> {
 
     if (password_in_db == null) {
         logbox.slog(`Password for usecase ${ usecase } not found`)
-        logbox.print()
+        
         return json(bad(mes("Password not found","Password for this usecase not found","warning")))
     }else{
 
         logbox.slog("Changing password: "+ password + "for usecase: " + usecase)
         const document_info = await passwords.updateOne({owner_id: session.userId , usecase: usecase }, { $set: { value: password } });
         logbox.slog("Password changed");
-        logbox.print() 
+         
         return json(ok({usecase: usecase}))
     }
 }
 
-export async function PASSWORDS_DELETE(event: RequestEvent): Promise<Response> {
-    const logbox = event.locals.logbox_
+export async function PASSWORDS_DELETE(object:any, event: RequestEvent): Promise<Response> {
+    const logbox = event.locals.logbox_.from()
     const session = event.locals.session;
 
     if (session == null) {
-        logbox.print()
+        logbox.slog("Session not found")
         return json(bad(mes("Session not found","Please log in","info")))
     }
 
-    const {usecase, password} = await event.request.json();
+    const {usecase, password} = object;
     const passwords = get_db().collection("passwords");
 
     // check if same password with same usecase exists
@@ -85,14 +85,14 @@ export async function PASSWORDS_DELETE(event: RequestEvent): Promise<Response> {
 
     if (password_in_db == null) {
         logbox.slog(`Password for usecase ${ usecase } not found`)
-        logbox.print()
+        
         return json(bad(mes("Password not found","Password for this usecase not found","warning")))
     }else{
 
         logbox.slog("Changing password: "+ password + "for usecase: " + usecase)
         const document_info = await passwords.updateOne({owner_id: session.userId , usecase: usecase }, { $set: { value: password } });
         logbox.slog("Password changed");
-        logbox.print() 
+         
         return json(ok({usecase: usecase}))
     }
 }

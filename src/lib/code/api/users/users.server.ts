@@ -1,15 +1,14 @@
 import { get_db } from "$lib/code/db.server";
 import { get_lucia } from "$lib/code/lucia.server";
-import { bad, mes, type Message } from "$lib/code/types";
+import { bad, mes, ok, type Message } from "$lib/code/types";
 import { json, type RequestEvent } from "@sveltejs/kit";
-import { ok } from "assert";
 
-export async function USERS_FETCH(event: RequestEvent): Promise<Response> {
-    const logbox = event.locals.logbox_
+export async function USERS_FETCH(object:any,event: RequestEvent): Promise<Response> {
+    const logbox = event.locals.logbox_.from()
     const session = event.locals.session;
 
     if (session == null) {
-        logbox.print()
+        logbox.slog("Session not found")
         return json(bad(mes("Session not found","Please log in","info")))
     }
 
@@ -18,21 +17,20 @@ export async function USERS_FETCH(event: RequestEvent): Promise<Response> {
     logbox.slog("Fetching user with id: " + session.userId + " length of " + session.userId.length)
     const user = await users.findOne({ _id: session.userId }, { projection: { password: 0 } } )
     if (user == null) {
-        logbox.print()
+        logbox.slog("User not found")
         return json(bad(mes("Not found","User associated with session not found")))
     } else {
 
         logbox.slog("Fetched user found: " + `${JSON.stringify(user)}`)
     }
 
-    logbox.print()
+    
     return json(ok(user))
 }
 
-export async function USERS_LOGIN(event: RequestEvent):Promise<Response>{
-    const logbox = event.locals.logbox_
-    const request = event.request;
-    const { name, password } = await request.json()
+export async function USERS_LOGIN(object:any,event: RequestEvent):Promise<Response>{
+    const logbox = event.locals.logbox_.from();
+    const { name, password } = object;
 
     logbox.slog("Trying to find user: " + name)
     const users = get_db().collection("users")
@@ -40,13 +38,11 @@ export async function USERS_LOGIN(event: RequestEvent):Promise<Response>{
 
     if (user == null) {
         logbox.slog("User logged with incorrect name")
-        logbox.print()
         return json(bad(mes("Login failed","User with that name or password not found","warning")))
     }
 
     if(password != user.password) {
         logbox.slog("User logged with incorrect password")
-        logbox.print()
         return json(bad(mes("Login failed","User with that name or password not found","warning")))
     }
 
@@ -61,19 +57,17 @@ export async function USERS_LOGIN(event: RequestEvent):Promise<Response>{
     });
 
     logbox.slog("User logged in")
-
     event.cookies.set("keep_cookie_test","true", {path:"/"})
 
-
-    logbox.print()
     return json(ok({name: user.name, role: user.role}));
 }
 
-export async function USERS_LOGOUT(event: RequestEvent):Promise<Response>{
-    const logbox = event.locals.logbox_
+export async function USERS_LOGOUT(object:any,event: RequestEvent):Promise<Response>{
+    const logbox = event.locals.logbox_.from()
     const session = event.locals.session;
 
     if(session == null){
+        logbox.slog("Session already closed")
         return json(ok("session already closed"))
     }
 
@@ -91,15 +85,14 @@ export async function USERS_LOGOUT(event: RequestEvent):Promise<Response>{
     });
 
     logbox.slog("User logged out")
-    logbox.print()
+    
     return json(ok("session closed"))
 }
 
-export async function USERS_REGISTER(event: RequestEvent):Promise<Response>{
+export async function USERS_REGISTER(object:any,event: RequestEvent):Promise<Response>{
 
-    const logbox = event.locals.logbox_
-    const request = event.request;
-    const { name, password } = await request.json()
+    const logbox = event.locals.logbox_.from()
+    const { name, password } = object;
     
     let users = get_db().collection("users")
 
@@ -121,7 +114,7 @@ export async function USERS_REGISTER(event: RequestEvent):Promise<Response>{
 
         if (fault_messages.length > 0) {
             logbox.slog("Input fults:\n" + JSON.stringify(fault_messages))
-            logbox.print()
+            
             return json(bad(...fault_messages))
         }
 
@@ -141,11 +134,11 @@ export async function USERS_REGISTER(event: RequestEvent):Promise<Response>{
             path:"/",
             ...sessionCookie.attributes
         });
-        logbox.print()
+        
         return json(ok({name: added_user?.name, role: added_user?.role}));
     } else {
         logbox.slog("User " + name + " already exists")
-        logbox.print()
+        
         return json(bad(mes("Register failed",`User with that name ${ name } already exists`,"warning")))
     }
 }
